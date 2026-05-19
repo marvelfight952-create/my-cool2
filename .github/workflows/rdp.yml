@@ -16,9 +16,9 @@ jobs:
 
       - name: Create System User
         run: |
-          $password = "BoraiHost2026#"
+          $password = "B@r@i_H0st_Pass_2026!!"
           $securePass = ConvertTo-SecureString $password -AsPlainText -Force
-          New-LocalUser -Name "BoraiHost" -Password $securePass -AccountNeverExpires
+          New-LocalUser -Name "BoraiHost" -Password $securePass -AccountNeverExpires -Description "RDP User"
           Add-LocalGroupMember -Group "Administrators" -Member "BoraiHost"
           Add-LocalGroupMember -Group "Remote Desktop Users" -Member "BoraiHost"
 
@@ -30,7 +30,7 @@ jobs:
           
           Write-Host "=========================================="
           Write-Host "Username: BoraiHost"
-          Write-Host "Password: BoraiHost2026#"
+          Write-Host "Password: B@r@i_H0st_Pass_2026!!"
           Write-Host "=========================================="
           
           $timeout = 360
