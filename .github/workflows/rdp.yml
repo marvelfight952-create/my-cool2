@@ -1,1 +1,40 @@
+name: RDP-Server
 
+on:
+  workflow_dispatch:
+
+jobs:
+  run-server:
+    runs-on: windows-latest
+    steps:
+      - name: Open Windows RDP Ports
+        run: |
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0 -Force
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -Name "UserAuthentication" -Value 0 -Force
+          Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+          netsh advfirewall firewall add rule name="AllowRDP" dir=in action=allow protocol=TCP localport=3389
+
+      - name: Create System User
+        run: |
+          $password = "BoraiHost2026#"
+          $securePass = ConvertTo-SecureString $password -AsPlainText -Force
+          New-LocalUser -Name "BoraiHost" -Password $securePass -AccountNeverExpires
+          Add-LocalGroupMember -Group "Administrators" -Member "BoraiHost"
+          Add-LocalGroupMember -Group "Remote Desktop Users" -Member "BoraiHost"
+
+      - name: Connect Tunnel
+        run: |
+          Invoke-WebRequest -Uri "https://localtonet.com/download/localtonet-windows-x64.zip" -OutFile "localtonet.zip"
+          Expand-Archive -Path "localtonet.zip" -DestinationPath "."
+          Start-Process .\localtonet.exe -ArgumentList "authtoken ${{ secrets.LOCALTONET_TOKEN }}" -WindowStyle Hidden
+          
+          Write-Host "=========================================="
+          Write-Host "Username: BoraiHost"
+          Write-Host "Password: BoraiHost2026#"
+          Write-Host "=========================================="
+          
+          $timeout = 360
+          for ($i = 0; $i -lt $timeout; $i++) {
+              Start-Sleep -Seconds 60
+              Write-Output "Server Live..."
+          }
