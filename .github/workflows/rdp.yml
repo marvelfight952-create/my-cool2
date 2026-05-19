@@ -24,7 +24,7 @@ jobs:
 
       - name: Connect Tunnel
         run: |
-          Invoke-WebRequest -Uri "https://localtonet.com/download/localtonet-windows-x64.zip" -OutFile "localtonet.zip"
+          Invoke-WebRequest -Uri "https://github.com/localtonet/localtonet/releases/download/v1.2.3/localtonet-windows-x64.zip" -OutFile "localtonet.zip"
           Expand-Archive -Path "localtonet.zip" -DestinationPath "."
           Start-Process .\localtonet.exe -ArgumentList "authtoken ${{ secrets.LOCALTONET_TOKEN }}" -WindowStyle Hidden
           
